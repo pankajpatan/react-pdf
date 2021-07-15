@@ -1,25 +1,41 @@
-import React from "react";
-
-
-import AllPagesPDFViewer from "./components/all-pages";
-
-/* This is required only if the project file is located 
-inside the app. Otherwise you can use the external link of the pdf file*/
+import React, { useState } from 'react';
+import Pdf from '@mikecousins/react-pdf';
 import samplePDF from "./sample1.pdf";
 
-import "./styles.css";
+const App = () => {
+  const [page, setPage] = useState(1);
 
-export default function App() {
   return (
-    <div className="App">
-     
-
-
-      <div className="all-page-container">
-        <AllPagesPDFViewer pdf={samplePDF} />
-      </div>
-
-      <hr />
-    </div>
+    <Pdf file={samplePDF} page={page}>
+      {({ pdfDocument, pdfPage, canvas }) => (
+        <>
+          {!pdfDocument && <span>Loading...</span>}
+          {canvas}
+          {Boolean(pdfDocument && pdfDocument.numPages) && (
+            <nav>
+              <ul className="pager">
+                <li className="previous">
+                  <button
+                    disabled={page === 1}
+                    onClick={() => setPage(page - 1)}
+                  >
+                    Previous
+                  </button>
+                </li>
+                <li className="next">
+                  <button
+                    disabled={page === pdfDocument.numPages}
+                    onClick={() => setPage(page + 1)}
+                  >
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          )}
+        </>
+      )}
+    </Pdf>
   );
-}
+};
+export default App
